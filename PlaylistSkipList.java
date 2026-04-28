@@ -117,7 +117,7 @@ public class PlaylistSkipList {
 
     private int randomLevel() {
         int level = 1;
-        while (level < max_level && radnom.nextDouble() < promotion_probability) {
+        while (level < max_level && random.nextDouble() < promotion_probability) {
             level ++;
         }
         return level;
@@ -162,11 +162,131 @@ public class PlaylistSkipList {
         size++;
         return true;
     }
+    /**
+     * removes node from skip list by its sort key and title.
+     * Both vals needed because play count alone may not be unique
+     * 
+     * Param: playCount: the current play count of node to remove,
+     * title: title of node to remove, returns the removed song or null if not found
+     */
+    public Song remove(int playCount, String title) {
+        SkipListNode[] = new SkipListNode[max_level];
+        SkipListNode current = head;
+        for (int i = currentLevel; i >= 0; i--){
+            while(current.forward[i] != tail && compare(current.forward[i].playCount, current.forward[i].song.getTitle(), playCount, title) < 0){
+                current = current.forward[i];
+            }
+            update[i] = current; 
+        }
+        SkipListNode target = current.forward[0];
+        if (target == tail || target.playCount != playCount || !target.song.getTitle().equals(title)) {
+            return null;
+        }
+        for (int i = 0; i <= currentLevel; i++) {
+            if(update[i].forward[i] != target)
+                break;
+            update[i].forward[i] = target.forward[i];
+        }
+        while (currentLevel > 0 && head.forward[currentLevel] == tail) {
+            currentLevel--;
+        }
+        size--;
+        return target.song;
+    }
+    /**
+     * Searches for song by its title
+     * App specific: in generic skip list one would typically search by key
+     * but users think of song by title not play count.
+     * 
+     * Paramters: Title: title of track to search for
+     * Returns the matching song, or null if not found.
+     */
+    public Song lookupByTitle(String title){
+        SkipListNode current = head.forward[0];
+        while(current != tail){
+            if(current.song.getTitle().equalsIgnoreCase(title)) {
+                return current.song;
+            }
+            current = current.forward[0];
+        }
+        return null;
+    }
+    /**
+     * Record one play of given song by title
+     * Because play count is the srot key, updating in place would break the skip list's ordering invariant
+     * instead we will find the song by title to get its current key, remove existing node with key, increment play count, reinsert song at new rank. 
+     * Parameters: title: Title of the song to play
+     * Retuns the updated Song, or null if the title was not found
+     * 
+     */
+    public Song play(String title){
+        Song song = lookupByTitle(title);
+        if(song == null) return null;
+        int oldCount = song.getPlayCount();
+        remove(oldCount, title);
+        int newCount = song.incrementPlayCount();
+        insert(song);
+        return song;
+    }
+    /**
+     * Returns the top N songs by play, in descedning order
+     * if fewer than N songg exist, then all songs are returned
+     * 
+     * App specific traversal: the skip lists base-level foward pointers naturally
+     * iterate in sorted order, so the top N is simply the first N nodes of the base list.
+     * 
+     * Paramters: N the number of top songs to retrieve
+     * 
+     * returns a list of up to n songs in descedning play-count order
+     */
+    public List<Song> topN(int n){
+        List<Song> result = new ArrayList<>();
+        SkipListNode current = head.forward[0];
+        int count = 0;
+        while (current != tail && count < n) {
+            result.add(current.song);
+            current = current.forward[0];
+            count++;
+        }
+        return result;
+    }
+    /**
+     * Returns all songs in descending play-count order
+     */
+    public List<Song> getAllSorted(){
+        return topN(size);
+    }
+    /**
+     * returns num of songs currently in playlist
+     */
+    public int size() {
+        return size;
+    }
+    /**
+     * returns true if playlist has no songs
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
+    /**
+     * Produces a multi line text representation of the skip lists interal structure
+     * which shows which nodes appear at certain levels.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for(int i = currentLevel; i >= 0; i--){
+            sb.append(String.format("Level %2d: head", i));
+            SkipListNode current = head.forward[i];
+            while (current != tail) {
+                sb.append(String.format(" -> [%s (%d)]", current.song.getTitle(), current.playCount));
+                current = current.forward[i];
+            }
+            sb.append(" -> tail\n");
+        }
+        return sb.toString();
+    }
 
 }   
 
 
-
-
-
-}
