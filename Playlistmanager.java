@@ -20,11 +20,9 @@ public class Playlistmanager {
     private static final PlaylistSkipList playlist = new PlaylistSkipList();
     private static final Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
-        System.out.println("==============================================");
         System.out.println(" Playlist Manager Skip List Demo");
-        System.out.println("==============================================");
         System.out.println("Type 'help' for a list of commands.\n");
-        preloud();
+        preload();
         while(true){
             System.out.print("> ");
             String line = scanner.nextLine().trim();
@@ -50,7 +48,7 @@ public class Playlistmanager {
                 case "help": printHelp();
                 break;
                 case "quit":
-                case "exit";
+                case "exit":
                 System.out.println("goodbye");
                 return;
                 default: System.out.println("unknown command. Type 'help' for options");
@@ -79,7 +77,7 @@ public class Playlistmanager {
             return;
         }
         Song song = new Song(title, artist);
-        boolean insterted = playlist.insert(song);
+        boolean inserted = playlist.insert(song);
         if (inserted) {
             System.out.printf("Added: %s%n", song);
         } else {
@@ -179,7 +177,7 @@ public class Playlistmanager {
      */
     private static void cmdDebug() {
         System.out.println(" Skip list structure");
-        System.out.println(play.toString());
+        System.out.println(playlist.toString());
         System.out.printf("Total songs: %d%n", playlist.size());
     }
     /**
@@ -245,5 +243,5 @@ public class Playlistmanager {
 }
 
 
-}   
+
 

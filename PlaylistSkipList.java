@@ -71,8 +71,8 @@ public class PlaylistSkipList {
      * Head and tail spans all max_level levels from start
      */
     public PlaylistSkipList() {
-        head = new SkipListNode(null, Integer.max_level, max_level);
-        tail = new SkipListNode(null, Integer.min_value, max_level);
+        head = new SkipListNode(null, Integer.MAX_VALUE, max_level);
+        tail = new SkipListNode(null, Integer.MIN_VALUE, max_level);
         for (int i = 0; i < max_level; i++){
             head.forward[i] = tail;
         }
@@ -170,7 +170,7 @@ public class PlaylistSkipList {
      * title: title of node to remove, returns the removed song or null if not found
      */
     public Song remove(int playCount, String title) {
-        SkipListNode[] = new SkipListNode[max_level];
+        SkipListNode[] update = new SkipListNode[max_level];
         SkipListNode current = head;
         for (int i = currentLevel; i >= 0; i--){
             while(current.forward[i] != tail && compare(current.forward[i].playCount, current.forward[i].song.getTitle(), playCount, title) < 0){
